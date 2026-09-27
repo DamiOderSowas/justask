@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Just Ask</title>
+
+  <meta
+    name="description"
+    content="Please don't just say hello. Ask your question directly."
+  />
+
+  <style>
+    :root {
+      --background: #f6f6f3;
+      --text: #171717;
+      --muted: #666;
+      --border: #cfcfc9;
+      --green: #176b35;
+      --red: #a82a2a;
+      --link: #2457a6;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--background);
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-size: 18px;
+      line-height: 1.55;
+    }
+
+    a {
+      color: var(--link);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .page {
+      width: min(760px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 28px 0 70px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 90px;
+      font-size: 15px;
+    }
+
+    .logo {
+      font-weight: bold;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .languages {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .languages button {
+      border: 0;
+      background: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      text-decoration: underline;
+    }
+
+    .languages button.active {
+      color: var(--text);
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    h1 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(46px, 9vw, 78px);
+      line-height: 1;
+      letter-spacing: -0.04em;
+      margin: 0 0 28px;
+      font-weight: normal;
+    }
+
+    h2 {
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 34px;
+      line-height: 1.15;
+      margin: 70px 0 16px;
+      font-weight: normal;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    p {
+      margin: 0 0 20px;
+    }
+
+    .intro {
+      max-width: 680px;
+      font-size: 21px;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .rule {
+      margin: 34px 0;
+      padding-left: 20px;
+      border-left: 3px solid var(--text);
+    }
+
+    .conversation {
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin: 20px 0 28px;
+      background: #fff;
+    }
+
+    .conversation.bad {
+      border-left: 5px solid var(--red);
+    }
+
+    .conversation.good {
+      border-left: 5px solid var(--green);
+    }
+
+    .label {
+      font-weight: bold;
+      margin-bottom: 16px;
+    }
+
+    .bad .label {
+      color: var(--red);
+    }
+
+    .good .label {
+      color: var(--green);
+    }
+
+    .message {
+      margin: 9px 0;
+    }
+
+    .name {
+      font-weight: bold;
+    }
+
+    .copy {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 16px;
+      margin: 12px 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .copy-text {
+      flex: 1;
+    }
+
+    .copy button {
+      border: 1px solid var(--border);
+      background: var(--background);
+      padding: 7px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .copy button:hover {
+      background: #e9e9e4;
+    }
+
+    details {
+      border-top: 1px solid var(--border);
+      padding: 18px 0;
+    }
+
+    details:last-child {
+      border-bottom: 1px solid var(--border);
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    details p {
+      margin-top: 14px;
+      color: #444;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 80px;
+      padding-top: 24px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    [data-lang] {
+      display: none;
+    }
+
+    html[data-language="de"] [data-lang="de"] {
+      display: block;
+    }
+
+    html[data-language="en"] [data-lang="en"] {
+      display: block;
+    }
+
+    span[data-lang] {
+      display: none;
+    }
+
+    html[data-language="de"] span[data-lang="de"] {
+      display: inline;
+    }
+
+    html[data-language="en"] span[data-lang="en"] {
+      display: inline;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        font-size: 17px;
+      }
+
+      header {
+        margin-bottom: 60px;
+      }
+
+      .intro {
+        font-size: 19px;
+      }
+
+      .copy {
+        display: block;
+      }
+
+      .copy button {
+        margin-top: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page">
+    <header>
+      <a class="logo" href="/">justask.</a>
+
+      <div class="languages">
+        <button id="lang-de" onclick="setLanguage('de')">
+          DE
+        </button>
+
+        <span>/</span>
+
+        <button id="lang-en" onclick="setLanguage('en')">
+          EN
+        </button>
+      </div>
+    </header>
+
+    <!-- DEUTSCH -->
+
+    <section data-lang="de">
+      <h1>
+        Sag einfach,<br />
+        was du brauchst.
+      </h1>
+
+      <div class="intro">
+        <p>
+          Bitte schreib nicht nur "Hallo" und warte dann auf eine Antwort.
+        </p>
+
+        <p>
+          Frag auch nicht erst, ob du etwas fragen darfst.
+          Schreib einfach direkt deine Frage dazu.
+        </p>
+      </div>
+
+      <div class="rule">
+        <h3>Hallo ist völlig okay.</h3>
+
+        <p>
+          Schreib nur am besten direkt dazu, warum du dich meldest.
+        </p>
+      </div>
+
+      <div class="rule">
+        <h3>Du darfst fragen.</h3>
+
+        <p>
+          Wenn du schon eine Frage hast, dann stell sie einfach.
+        </p>
+      </div>
+
+      <h2>Zum Beispiel</h2>
+
+      <div class="conversation bad">
+        <div class="label">Nicht so</div>
+
+        <div class="message">
+          <span class="name">Alex:</span>
+          Hallo
+        </div>
+
+        <div class="message">
+          <span class="name">Sam:</span>
+          Hi
+        </div>
+
+        <div class="message">
+          <span class="name">Alex:</span>
+          Kann ich dich was fragen?
+        </div>
+
+        <div class="message">
+          <span class="name">Sam:</span>
+          Klar
+        </div>
+
+        <div class="message">
+          <span class="name">Alex:</span>
+          Warum bekomme ich beim Login einen 500 Fehler?
+        </div>
+      </div>
+
+      <div class="conversation good">
+        <div class="label">Besser</div>
+
+        <div class="message">
+          <span class="name">Alex:</span>
+          Hi, warum bekomme ich beim Login einen 500 Fehler?
+          Seit dem letzten Update funktioniert es nicht mehr.
+        </div>
+
+        <div class="message">
+          <span class="name">Sam:</span>
+          Schick mir bitte den Fehler aus dem Server-Log.
+        </div>
+      </div>
+
+      <p>
+        Die zweite Variante spart mehrere Nachrichten und die andere Person
+        kann direkt antworten, sobald sie Zeit hat.
+      </p>
+
+      <h2>Du wurdest hierher geschickt?</h2>
+
+      <p>
+        Keine Sorge. Die Person möchte wahrscheinlich einfach,
+        dass du deine Frage direkt mitschickst.
+      </p>
+
+      <p>
+        Statt:
+      </p>
+
+      <div class="copy">
+        <div class="copy-text">
+          Hey, hast du kurz Zeit?
+        </div>
+
+        <button onclick="copyParent(this)">
+          Kopieren
+        </button>
+      </div>
+
+      <p>
+        lieber:
+      </p>
+
+      <div class="copy">
+        <div class="copy-text">
+          Hey, hast du kurz Zeit? Ich bekomme bei unserem Server einen 502 Fehler.
+          Weißt du, woran das liegen könnte?
+        </div>
+
+        <button onclick="copyParent(this)">
+          Kopieren
+        </button>
+      </div>
+
+      <h2>FAQ</h2>
+
+      <details>
+        <summary>Ist "Hallo" jetzt verboten?</summary>
+
+        <p>
+          Nein. Schreib ruhig Hallo. Schreib deine Frage einfach direkt in
+          dieselbe Nachricht.
+        </p>
+      </details>
+
+      <details>
+        <summary>Ist das nicht unhöflich?</summary>
+
+        <p>
+          Direkt zu fragen ist nicht unhöflich. Du kannst freundlich sein und
+          trotzdem sofort erklären, was du brauchst.
+        </p>
+      </details>
+
+      <details>
+        <summary>Warum überhaupt?</summary>
+
+        <p>
+          Bei Chats antworten Menschen oft nicht sofort. Wenn deine Frage
+          bereits in der ersten Nachricht steht, können sie später direkt
+          darauf antworten.
+        </p>
+      </details>
+    </section>
+
+    <!-- ENGLISH -->
+
+    <section data-lang="en">
+      <h1>
+        Just ask<br />
+        your question.
+      </h1>
+
+      <div class="intro">
+        <p>
+          Please don't send only "Hello" and then wait for a reply.
+        </p>
+
+        <p>
+          You also don't need to ask if you can ask a question.
+          Just send the question.
+        </p>
+      </div>
+
+      <div class="rule">
+        <h3>Saying hello is fine.</h3>
+
+        <p>
+          Just include what you need in the same message.
+        </p>
+      </div>
+
+      <div class="rule">
+        <h3>You can just ask.</h3>
+
+        <p>
+          If you already know your question, send it.
+        </p>
+      </div>
+
+      <h2>For example</h2>
+
+      <div class="conversation bad">
+        <div class="label">Don't do this</div>
+
+        <div class="message">
+          <span class="name">Alex:</span>
+          Hello
+        </div>
+
+        <div class="message">
+          <span class="name">Sam:</span>
+          Hi
+        </div>
+
+        <div class="message">
+          <span class="name">Alex:</span>
+          Can I ask you something?
+        </div>
+
+        <div class="message">
+          <span class="name">Sam:</span>
+          Sure
+        </div>
+
+        <div class="message">
+          <span class="name">Alex:</span>
+          Why do I get a 500 error when logging in?
+        </div>
+      </div>
+
+      <div class="conversation good">
+        <div class="label">Do this instead</div>
+
+        <div class="message">
+          <span class="name">Alex:</span>
+          Hey, why do I get a 500 error when logging in?
+          It stopped working after the last update.
+        </div>
+
+        <div class="message">
+          <span class="name">Sam:</span>
+          Send me the error from the server log.
+        </div>
+      </div>
+
+      <p>
+        The second version saves several messages and lets the other person
+        answer whenever they are available.
+      </p>
+
+      <h2>Someone sent you this page?</h2>
+
+      <p>
+        Don't worry. They probably just want you to include your question
+        in your first message.
+      </p>
+
+      <p>
+        Instead of:
+      </p>
+
+      <div class="copy">
+        <div class="copy-text">
+          Hey, do you have a minute?
+        </div>
+
+        <button onclick="copyParent(this)">
+          Copy
+        </button>
+      </div>
+
+      <p>
+        try:
+      </p>
+
+      <div class="copy">
+        <div class="copy-text">
+          Hey, do you have a minute? Our server is returning a 502 error.
+          Do you know what might be causing it?
+        </div>
+
+        <button onclick="copyParent(this)">
+          Copy
+        </button>
+      </div>
+
+      <h2>FAQ</h2>
+
+      <details>
+        <summary>Am I not allowed to say hello?</summary>
+
+        <p>
+          Of course you are. Just include your question in the same message.
+        </p>
+      </details>
+
+      <details>
+        <summary>Isn't this rude?</summary>
+
+        <p>
+          No. Being direct and being polite are not opposites.
+          You can be friendly while explaining what you need right away.
+        </p>
+      </details>
+
+      <details>
+        <summary>Why does this matter?</summary>
+
+        <p>
+          People often answer chat messages later. If your question is already
+          there, they can respond immediately when they see it.
+        </p>
+      </details>
+    </section>
+
+    <footer>
+      <span data-lang="de">
+        Weniger Ping-Pong. Mehr Kontext.
+      </span>
+
+      <span data-lang="en">
+        Less ping-pong. More context.
+      </span>
+    </footer>
+  </main>
+
+  <script>
+    const DEFAULT_LANGUAGE = "en";
+
+    function applyLanguage(language) {
+      const lang = language === "de" ? "de" : "en";
+
+      document.documentElement.dataset.language = lang;
+      document.documentElement.lang = lang;
+
+      document.getElementById("lang-de").classList.toggle(
+        "active",
+        lang === "de"
+      );
+
+      document.getElementById("lang-en").classList.toggle(
+        "active",
+        lang === "en"
+      );
+
+      document.title =
+        lang === "de"
+          ? "Just Ask | Frag einfach"
+          : "Just Ask | Ask your question";
+    }
+
+    function setLanguage(language) {
+      localStorage.setItem("language", language);
+      applyLanguage(language);
+    }
+
+    function getBrowserLanguage() {
+      const language = (
+        navigator.language ||
+        navigator.userLanguage ||
+        ""
+      ).toLowerCase();
+
+      if (language.startsWith("de")) {
+        return "de";
+      }
+
+      return "en";
+    }
+
+    async function detectLanguage() {
+      const savedLanguage = localStorage.getItem("language");
+
+      if (savedLanguage === "de" || savedLanguage === "en") {
+        applyLanguage(savedLanguage);
+        return;
+      }
+
+      /*
+       * IP country detection.
+       *
+       * This uses ipapi.co.
+       * No API key is required for basic usage,
+       * but the service has request limits.
+       */
+
+      try {
+        const response = await fetch(
+          "https://ipapi.co/country/",
+          {
+            method: "GET",
+            headers: {
+              Accept: "text/plain"
+            }
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Country lookup failed");
+        }
+
+        const country = (await response.text())
+          .trim()
+          .toUpperCase();
+
+        const germanCountries = [
+          "DE",
+          "AT",
+          "CH",
+          "LI"
+        ];
+
+        if (germanCountries.includes(country)) {
+          applyLanguage("de");
+          return;
+        }
+
+        applyLanguage("en");
+      } catch (error) {
+        applyLanguage(
+          getBrowserLanguage() || DEFAULT_LANGUAGE
+        );
+      }
+    }
+
+    async function copyParent(button) {
+      const box = button.closest(".copy");
+      const text = box
+        .querySelector(".copy-text")
+        .innerText
+        .trim();
+
+      await navigator.clipboard.writeText(text);
+
+      const language =
+        document.documentElement.dataset.language;
+
+      button.textContent =
+        language === "de"
+          ? "Kopiert"
+          : "Copied";
+
+      setTimeout(() => {
+        button.textContent =
+          language === "de"
+            ? "Kopieren"
+            : "Copy";
+      }, 1200);
+    }
+
+    applyLanguage(DEFAULT_LANGUAGE);
+    detectLanguage();
+  </script>
+</body>
+</html>
